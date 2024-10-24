@@ -12,11 +12,13 @@ import java.util.concurrent.Executors;
 public class HttpServer {
     private int port;
     private Dispatcher dispatcher;
+    private DatabaseProvaider databaseProvaider;
     private static final Logger LOGGER = LogManager.getLogger(HttpServer.class);
 
     public HttpServer(int port) {
         this.port = port;
         this.dispatcher = new Dispatcher();
+        this.databaseProvaider = new DatabaseProvaider();
     }
 
     public void start() {
