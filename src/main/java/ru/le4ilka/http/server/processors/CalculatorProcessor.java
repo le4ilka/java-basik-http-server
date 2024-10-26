@@ -10,12 +10,13 @@ import java.nio.charset.StandardCharsets;
 public class CalculatorProcessor implements RequestProcessor {
     @Override
     public void execute(HttpRequest request, OutputStream output) throws IOException {
-        if (!request.containsParameter("a")) {
+        if (!request.containsParameter("a") || request.getParameter("a") == null) {
             throw new BadRequestException("Parameter 'a' is missing");
         }
-        if (!request.containsParameter("b")) {
+        if (!request.containsParameter("b") || request.getParameter("b") == null) {
             throw new BadRequestException("Parameter 'b' is missing");
         }
+
         int a, b;
         try {
             a = Integer.parseInt(request.getParameter("a"));

@@ -39,4 +39,8 @@ public class Item {
         this.title = title;
         this.price = price;
     }
+
+    public String toString() {
+        return id + " " + title + " " + price;
+    }
 }

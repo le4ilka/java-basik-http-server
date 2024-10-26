@@ -60,8 +60,13 @@ public class HttpRequest {
             String[] elements = uri.split("[?]");
             uri = elements[0];
             String[] keysValues = elements[1].split("[&]");
-            for (String o : keysValues) {
-                String[] keyValue = o.split("=");
+
+            for (String keysValue : keysValues) {
+                String[] keyValue = keysValue.split("=");
+                if (keyValue.length < 2) {
+                    parameters.put(keyValue[0], null);
+                    continue;
+                }
                 parameters.put(keyValue[0], keyValue[1]);
             }
         }
@@ -88,7 +93,7 @@ public class HttpRequest {
     }
 
     public void info() {
-//        LOGGER.debug("Первоначальный запрос: {}", rawRequest);
+        LOGGER.debug("Первоначальный запрос: {}", rawRequest);
         LOGGER.info("Method: {}", method);
         LOGGER.info("URI: {}", uri);
         LOGGER.info("Parameters: {}", parameters);
