@@ -27,7 +27,7 @@ public class Dispatcher {
         this.processors.put("GET /", new HelloWorldProcessor());
         this.processors.put("GET /calculator", new CalculatorProcessor());
         this.processors.put("GET /items", new GetAllItemsProcessor(databaseProvaider));
-        this.processors.put("POST /items", new CreateNewItemsProcessor(itemsRepository));
+        this.processors.put("POST /items", new CreateNewItemsProcessor(databaseProvaider));
         this.possibleUrls = new HashSet<>();
         this.possibleUrls.add("POST /calculator");
         this.possibleUrls.add("POST /calculator/");

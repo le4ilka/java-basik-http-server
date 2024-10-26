@@ -4,11 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.le4ilka.http.server.app.Item;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseProvaider implements AutoCloseable{
+public class DatabaseProvaider implements AutoCloseable {
     private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/items";
     private static Connection connection;
     private static final Logger LOGGER = LogManager.getLogger(DatabaseProvaider.class);
@@ -18,12 +19,13 @@ public class DatabaseProvaider implements AutoCloseable{
         try {
             connection = DriverManager.getConnection(DATABASE_URL, "postgres", "111111");
         } catch (Exception e) {
-            System.out.println("Что-то поймали");
+            LOGGER.info("Что-то поймали");
             e.printStackTrace();
         }
 
         LOGGER.info("Сервис запущен: DB режим");
         this.getItems();
+       // this.insertItem("box12", BigDecimal.valueOf(100));
     }
 
     private static final String GET_ITEMS_QUERY = "select id, title, price from item";
@@ -59,7 +61,7 @@ public class DatabaseProvaider implements AutoCloseable{
                     item.setId(resultSet.getLong(1));
                     item.setTitle(resultSet.getString(2));
                     item.setPrice(resultSet.getBigDecimal(3));
-                    LOGGER.info("{} {} {}",resultSet.getString(1), resultSet.getString(2), resultSet.getString(3) );
+                    LOGGER.info("{} {} {}", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
 
                 }
             }
@@ -70,7 +72,25 @@ public class DatabaseProvaider implements AutoCloseable{
     }
 
 
-    public void close() {
+    private static final String INSERT_ITEM_QUERY = "insert into item (title, price) values (?, ?)";
+
+    public boolean insertItem(Item item) {
+        String title = item.getTitle();
+        BigDecimal price = item.getPrice();
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_ITEM_QUERY)) {
+            statement.setString(1, title);
+            statement.setBigDecimal(2, price);
+            statement.executeUpdate();
+            LOGGER.info("Продукт {} - {} добавлен", title, price);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+        public void close() {
         try {
             connection.close();
         } catch (Exception e) {
