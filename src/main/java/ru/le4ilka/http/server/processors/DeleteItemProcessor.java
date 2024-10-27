@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-public class DeleteItemProcessor implements RequestProcessor{
+public class DeleteItemProcessor implements RequestProcessor {
     DatabaseProvaider databaseProvaider;
 
 
@@ -25,13 +25,24 @@ public class DeleteItemProcessor implements RequestProcessor{
             if (request.getParameter("id") == null) {
                 throw new BadRequestException("Parameter 'id' is missing");
             }
-            String id = request.getParameter("id");
-            databaseProvaider.deleteItem(Long.valueOf(id));
-            Item item = databaseProvaider.getItem(Long.valueOf(id));
 
-            if (item.getId() == null && item.getTitle() == null) {
+            String id = request.getParameter("id");
+
+            try {
+                Long.valueOf(id);
+            } catch (NumberFormatException e) {
+                throw new BadRequestException("Parameter 'id' has incorrect type");
+            }
+
+            Item item = databaseProvaider.getItem(Long.valueOf(request.getParameter("id")));
+
+            if (item.getId() == null) {
                 throw new BadRequestException("No such item");
             }
+
+
+
+            databaseProvaider.deleteItem(Long.valueOf(id));
 
             Gson gson = new Gson();
             String itemJson = gson.toJson(databaseProvaider.getItem(Long.valueOf(id)));

@@ -89,14 +89,13 @@ public class DatabaseProvaider implements AutoCloseable {
         }
     }
 
-
-
     private static final String DELETE_ITEM_QUERY = "delete from item where id = ?";
 
     public boolean deleteItem(Long id) {
         try (PreparedStatement statement = connection.prepareStatement(DELETE_ITEM_QUERY)) {
             statement.setLong(1, id);
             statement.executeUpdate();
+            LOGGER.info("Удален");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
