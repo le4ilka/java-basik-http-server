@@ -15,17 +15,31 @@ public class DatabaseProvaider implements AutoCloseable {
     private static final Logger LOGGER = LogManager.getLogger(DatabaseProvaider.class);
 
     public DatabaseProvaider() {
-
         try {
             connection = DriverManager.getConnection(DATABASE_URL, "postgres", "111111");
         } catch (Exception e) {
             LOGGER.info("Что-то поймали");
             e.printStackTrace();
         }
-
         LOGGER.info("Сервис запущен: DB режим");
         this.getItems();
-       // this.insertItem("box12", BigDecimal.valueOf(100));
+    }
+
+    private static final String GET_ALL_ID_QUERY = "select id from item";
+
+    public List<Long> getAllId() {
+        List<Long> allId = new ArrayList<>();
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(GET_ALL_ID_QUERY)) {
+                while (resultSet.next()) {
+                    allId.add(resultSet.getLong(1));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        LOGGER.info("Список id: {}", allId);
+        return allId;
     }
 
     private static final String GET_ITEMS_QUERY = "select id, title, price from item";
@@ -49,7 +63,6 @@ public class DatabaseProvaider implements AutoCloseable {
         return items;
     }
 
-
     private static final String GET_ITEM_QUERY = "select id, title, price from item where id = ?";
 
     public Item getItem(Long id) {
@@ -61,8 +74,7 @@ public class DatabaseProvaider implements AutoCloseable {
                     item.setId(resultSet.getLong(1));
                     item.setTitle(resultSet.getString(2));
                     item.setPrice(resultSet.getBigDecimal(3));
-                    LOGGER.info("{} {} {}", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
-
+                    LOGGER.info("Продукт: {} {} {}", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
                 }
             }
         } catch (Exception e) {
@@ -70,7 +82,6 @@ public class DatabaseProvaider implements AutoCloseable {
         }
         return item;
     }
-
 
     private static final String INSERT_ITEM_QUERY = "insert into item (title, price) values (?, ?)";
 
@@ -103,8 +114,63 @@ public class DatabaseProvaider implements AutoCloseable {
         }
     }
 
+    private static final String UPDATE_TITLE_PRICE_QUERY = "update item set title = ?, price = ? where id = ?";
 
-        public void close() {
+    public boolean updateItem(Item item) {
+        Long id = item.getId();
+        String title = item.getTitle();
+        BigDecimal price = item.getPrice();
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_TITLE_PRICE_QUERY)){
+            statement.setString(1, title);
+            statement.setBigDecimal(2, price);
+            statement.setLong(3, id);
+            statement.executeUpdate();
+            LOGGER.info("Продукт: {} {} {} - изменен", id, title, price);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static final String UPDATE_TITLE_QUERY = "update item set title = ? where id = ?";
+
+    public boolean updateTitle(Item item) {
+        Long id = item.getId();
+        String title = item.getTitle();
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_TITLE_QUERY)){
+            statement.setString(1, title);
+            statement.setLong(2, id);
+            statement.executeUpdate();
+            LOGGER.info("Продукт: {} {} - изменен", id, title);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static final String UPDATE_PRICE_QUERY = "update item set price = ? where id = ?";
+
+    public boolean updatePrice(Item item) {
+        Long id = item.getId();
+        String title = item.getTitle();
+        BigDecimal price = item.getPrice();
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_PRICE_QUERY)){
+            statement.setBigDecimal(1, price);
+            statement.setLong(2, id);
+            statement.executeUpdate();
+            LOGGER.info("Продукт: {} {} - изменен", id, price);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+    public void close() {
         try {
             connection.close();
         } catch (Exception e) {

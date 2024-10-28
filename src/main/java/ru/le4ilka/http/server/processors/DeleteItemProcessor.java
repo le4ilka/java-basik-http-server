@@ -33,17 +33,11 @@ public class DeleteItemProcessor implements RequestProcessor {
             } catch (NumberFormatException e) {
                 throw new BadRequestException("Parameter 'id' has incorrect type");
             }
-
             Item item = databaseProvaider.getItem(Long.valueOf(request.getParameter("id")));
-
             if (item.getId() == null) {
                 throw new BadRequestException("No such item");
             }
-
-
-
             databaseProvaider.deleteItem(Long.valueOf(id));
-
             Gson gson = new Gson();
             String itemJson = gson.toJson(databaseProvaider.getItem(Long.valueOf(id)));
 
