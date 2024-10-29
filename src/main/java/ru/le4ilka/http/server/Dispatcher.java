@@ -24,7 +24,7 @@ public class Dispatcher {
         this.databaseProvaider = new DatabaseProvaider();
         this.itemsRepository = new ItemsRepository();
         this.processors = new HashMap<>();
-        this.processors.put("GET /", new HelloWorldProcessor());
+        this.processors.put("GET /", new GetFileProcessor());
         this.processors.put("GET /calculator", new CalculatorProcessor());
         this.processors.put("GET /items", new GetAllItemsProcessor(databaseProvaider));
         this.processors.put("POST /items", new CreateNewItemsProcessor(databaseProvaider));
