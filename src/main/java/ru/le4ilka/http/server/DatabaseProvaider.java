@@ -18,10 +18,10 @@ public class DatabaseProvaider implements AutoCloseable {
         try {
             connection = DriverManager.getConnection(DATABASE_URL, "postgres", "111111");
         } catch (Exception e) {
-            LOGGER.info("Что-то поймали");
+            LOGGER.info("Ошибка подключения к БД");
             e.printStackTrace();
         }
-        LOGGER.info("Сервис запущен: DB режим");
+        LOGGER.info("Запущен DB режим");
         this.getItems();
     }
 
@@ -59,7 +59,6 @@ public class DatabaseProvaider implements AutoCloseable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        LOGGER.info("Список продуктов: {}", items.toString());
         return items;
     }
 
@@ -167,8 +166,6 @@ public class DatabaseProvaider implements AutoCloseable {
             return false;
         }
     }
-
-
 
     public void close() {
         try {

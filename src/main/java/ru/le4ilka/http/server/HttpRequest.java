@@ -93,7 +93,7 @@ public class HttpRequest {
     }
 
     public void info() {
-        LOGGER.debug("Первоначальный запрос: {}", rawRequest);
+        LOGGER.debug("Входящий запрос: {}", rawRequest);
         LOGGER.info("Method: {}", method);
         LOGGER.info("URI: {}", uri);
         LOGGER.info("Parameters: {}", parameters);
