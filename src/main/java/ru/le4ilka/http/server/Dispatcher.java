@@ -1,6 +1,5 @@
 package ru.le4ilka.http.server;
 
-import ru.le4ilka.http.server.app.ItemsRepository;
 import ru.le4ilka.http.server.processors.*;
 
 import java.io.File;
@@ -18,15 +17,13 @@ public class Dispatcher {
     private RequestProcessor defaultInternalServerErrorProcessor;
     private RequestProcessor defaultBadRequestProcessor;
     private RequestProcessor defaultMethodNotAllowedProcessor;
-    private ItemsRepository itemsRepository;
     private DatabaseProvaider databaseProvaider;
     private String fileDir = "./static/";
 
     public Dispatcher() {
         this.databaseProvaider = new DatabaseProvaider();
-        //this.itemsRepository = new ItemsRepository();
         this.processors = new HashMap<>();
-        this.processors.put("GET /", new HelloWorldProcessor());
+        this.processors.put("GET /", new HelloWorldProcessor(possibleUrls));
         this.processors.put("GET /calculator", new CalculatorProcessor());
         this.processors.put("GET /items", new GetAllItemsProcessor(databaseProvaider));
         this.processors.put("POST /items", new CreateNewItemsProcessor(databaseProvaider));

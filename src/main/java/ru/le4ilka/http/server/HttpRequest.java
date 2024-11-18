@@ -50,6 +50,11 @@ public class HttpRequest {
         return parameters.containsKey(key);
     }
 
+    public int getPort(){
+        String[] extractPortFromHeader = this.parseHeaders().get("Host").split(":");
+        return Integer.parseInt(extractPortFromHeader[1]);
+    }
+
     private void parse() {
         int startIndex = rawRequest.indexOf(' ');
         int endIndex = rawRequest.indexOf(' ', startIndex + 1);
@@ -75,7 +80,7 @@ public class HttpRequest {
         }
     }
 
-    private void parseHeaders() {
+    private Map<String, String> parseHeaders() {
         int startIndex = rawRequest.indexOf("\r\n", rawRequest.indexOf(' ') + 1);
         int endIndex = rawRequest.indexOf("\r\n\r\n") - 4;
         String rawHeaders = rawRequest.substring(startIndex, endIndex);
@@ -90,6 +95,7 @@ public class HttpRequest {
             }
             headersMap.put(key, value);
         }
+        return headersMap;
     }
 
     public void info() {
